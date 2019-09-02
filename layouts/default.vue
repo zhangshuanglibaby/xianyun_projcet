@@ -1,8 +1,11 @@
 <template>
   <div>
+    <!--渲染头部组件-->
     <Header/>
     <!-- 页面的占位符,类似router-view -->
     <nuxt />
+
+  <!-- 渲染页脚组件 -->
     <Footer/>
   </div>
 </template>
@@ -32,21 +35,25 @@ html {
   box-sizing: border-box;
 }
 
-* {
-  margin: 0;
-  padding: 0;
+*{
+  margin:0;
+  padding:0;
 }
 
-ul,li,ol {
+ul,li,ol{
   list-style: none;
 }
 
-i,em {
+i,em{
   font-style: normal;
 }
-a {
-  /* inherit继承父的 */
-  color: inherit; 
+
+a{
+  color:inherit; 
   text-decoration: none;
+}
+
+a:hover{
+  color:inherit; 
 }
 </style>

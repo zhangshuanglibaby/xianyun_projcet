@@ -48,7 +48,7 @@ export default {
 }
 </script>
 
-<style lang='less' scope>
+<style scoped lang="less">
   .footer_warpper {
     min-width: 1000px;
     background-color: #333333;

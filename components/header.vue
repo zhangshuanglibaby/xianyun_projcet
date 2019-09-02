@@ -25,7 +25,7 @@
 export default {};
 </script>
 
-<style lang='less' scope>
+<style scoped lang='less'>
 .container {
   height: 60px;
   line-height: 60px;
