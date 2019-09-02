@@ -3,6 +3,7 @@
     <Header/>
     <!-- 页面的占位符,类似router-view -->
     <nuxt />
+    <Footer/>
   </div>
 </template>
 
