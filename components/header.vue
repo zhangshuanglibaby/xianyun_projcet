@@ -33,6 +33,7 @@ export default {};
 }
 .header {
   width: 1000px;
+  height: 60px;
   margin: 0 auto;
 }
 

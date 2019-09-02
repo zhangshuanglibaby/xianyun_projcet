@@ -29,7 +29,7 @@
           <span><i>机票</i></span>-->
         </el-row>
         <!-- 搜索框 -->
-        <el-row type="flex" class="search_input">
+        <el-row type="flex" class="search_input" align="middle">
           <input type="text" :placeholder="options[current].placeholder" />
           <i class="el-icon-search"></i>
         </el-row>
@@ -159,7 +159,7 @@ export default {
         font-size: 16px;
       }
       .el-icon-search {
-        padding: 12px 10px 0 10px;
+        padding: 0 10px;
         font-size: 22px;
         font-weight: bold;
         cursor: pointer;
