@@ -12,7 +12,10 @@
             </el-row>
 
             <!-- 引入登录组件 -->
-            <loginForm />
+            <loginForm  v-if="current === 0"/>
+
+            <!-- 引入注册组件 -->
+            <registerForm v-if="current === 1"/>
 
         </div>
       </el-row>
@@ -21,14 +24,16 @@
 
 <script>
 import loginForm from '@/components/user/loginForm'
+import registerForm from '@/components/user/registerForm'
 export default {
   //引入组件
   components : {
-    loginForm
+    loginForm,
+    registerForm
   },
   data() {
     return {
-      current : 0
+      current : 1
     }
   }
 }
@@ -49,7 +54,7 @@ export default {
 .form_wrapper {
   position: absolute;
   top: 0;
-  margin-top: 20%;
+  margin-top: 10%;
   width: 400px;
   background-color: #fff;
   .tabs {
