@@ -49,10 +49,18 @@ export default {
             method : 'post',
             data : this.loginForm
           }).then(res => {
-            //使用mutations设置数据---利用commit
+            console.log(res)
+            if(res.status === 200) {
+              //使用mutations设置数据---利用commit
             //this.$store.commit(模块/mutations的方法名,参数)
-            this.$store.commit('user/setUserInfo',res.data)
+              this.$store.commit('user/setUserInfo',res.data)
+              this.$message.success('登录成功')
+            } 
+          }).catch(() => {
+            this.$message.error('用户名或密码错误')
           })
+        }else {
+          this.$message.error('请把必填的信息完善')
         }
       })
     }

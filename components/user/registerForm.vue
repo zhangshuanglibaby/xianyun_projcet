@@ -20,7 +20,7 @@
       <el-form-item prop="checkPassWord">
         <el-input v-model="registerForm.checkPassWord" type="password" placeholder="确认密码"></el-input>
       </el-form-item>
-      <el-button type="primary" size="medium" class="registerBtn">注册</el-button>
+      <el-button type="primary" size="medium" class="registerBtn" @click="handelRegister">注册</el-button>
     </el-form>
   </el-row>
 </template>
@@ -72,7 +72,9 @@ export default {
         captcha: [{ required: true, message: "请输入验证码", trigger: "blur" }],
         password: [{ validator: validatePass, trigger: "blur" }],
         checkPassWord: [{ validator: validatecheckPassWord, trigger: "blur" }]
-      }
+      },
+      //用一个变量保存验证码
+      code :''
     };
   },
   methods : {
@@ -86,6 +88,14 @@ export default {
           type: 'warning'
         })
       }
+      //要检验手机格式长度是否正确
+      if(this.registerForm.username.length!== 11) {
+        this.$alert('手机号码格式不正确','提示' ,{
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+      }
       //实现手机验证码
       this.$axios({
         url : '/captchas',
@@ -94,11 +104,43 @@ export default {
       }).then(res => {
         // console.log(res)
         if(res.status === 200) {
+          // const {code} = res.data
+          this.code = res.data.code
           this.$alert('模拟手机验证码为: ' + res.data.code,'提示',{
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
           })
+        }
+      })
+    },
+    //注册
+    handelRegister() {
+      //要进行表单的二次验证
+      this.$refs.registerForm.validate(valid => {
+        if(valid) {
+          //使用解构的方法可以拿到想要的数据
+          let {checkPassWord,...params} = this.registerForm
+          this.$axios({
+            url : '/accounts/register',
+            method : 'post',
+            data : params
+          }).then(res => {
+            // console.log(res)
+            if(res.status === 200) {
+              //注册成功后,会自动登录,要使用状态管理
+              this.$store.commit('user/setUserInfo',res.data)
+              this.$message.success('注册成功')
+            }else {
+              this.$message.error('注册失败')
+            }
+          }).catch(() => {
+            if(this.code !== this.registerForm.captcha) {
+              this.$message.warning('手机验证码错误')
+            }
+          })
+        }else {
+          this.$message.error('请把必填的信息完善')
         }
       })
     }
