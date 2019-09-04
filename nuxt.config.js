@@ -31,7 +31,9 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '@/plugins/element-ui'
+    '@/plugins/element-ui',
+    // 引入vuex-persistedstate -- 实现把store保存到本地
+    { src: '@/plugins/localStorage.js', ssr: false }
   ],
   /*
   ** Nuxt.js dev-modules

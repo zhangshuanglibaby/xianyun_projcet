@@ -14,15 +14,47 @@
         <nuxt-link to="/air">国内机票</nuxt-link>
       </el-row>
       <!-- 登录 -->
-      <div class="login">
+      <div class="login" v-if="!$store.state.user.userInfo.token">
         <nuxt-link to="/user/login">登录 / 注册</nuxt-link>
+      </div>
+      <!-- 用户信息 -->
+      <div class="userInfo" v-else>
+        <el-dropdown>
+          <!-- <span class="el-dropdown-link">
+            <img src="" alt="">
+            下拉菜单
+            <i class="el-icon-caret-bottom el-icon--right"></i>
+          </span>-->
+          <el-row type="flex" class="el-dropdown-link">
+            <nuxt-link to="#">
+              <img
+                :src="$axios.defaults.baseURL + $store.state.user.userInfo.user.defaultAvatar"
+                alt
+              />
+              {{$store.state.user.userInfo.user.nickname}}
+            </nuxt-link>
+          </el-row>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>个人中心</el-dropdown-item>
+            <el-dropdown-item @click.native="handelLogOut">
+             <nuxt-link to="#">退出</nuxt-link> 
+              </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </div>
     </el-row>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  methods : {
+    handelLogOut() {
+      //点击退出,清空用书数据
+      this.$store.commit('user/clearUserInfo')
+    }
+  }
+};
 </script>
 
 <style scoped lang='less'>
@@ -54,7 +86,7 @@ export default {};
     background-color: #00a0ff;
     color: #fff !important;
     &:hover {
-      color: #fff
+      color: #fff;
     }
   }
 }
@@ -67,6 +99,18 @@ export default {};
     display: block;
   }
 }
-
-
+.el-dropdown-link {
+  img {
+    width: 36px;
+    border-radius: 50%;
+    box-sizing: border-box;
+    border: 2px solid #fff;
+    vertical-align: middle;
+  }
+  &:hover {
+    img {
+      border: 2px solid #00a0ff;
+    }
+  }
+}
 </style>
