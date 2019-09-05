@@ -57,7 +57,8 @@ export default {
               this.$message.success('登录成功')
             } 
           }).catch(() => {
-            this.$message.error('用户名或密码错误')
+            // this.$message.error('用户名或密码错误')
+            //错误拦截器会处理
           })
         }else {
           this.$message.error('请把必填的信息完善')

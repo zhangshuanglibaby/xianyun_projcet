@@ -92,9 +92,8 @@ export default {
     position: absolute;
     left: 0;
     top: 0;
-    margin-top: 25%;
-    // margin-left: 30%;
-    // margin-left: -500px;
+    margin-top: 15%;
+    margin-left: 15%;
     .search_bar {
       width: 552px;
       margin: 0 auto;
