@@ -23,6 +23,7 @@
           placeholder="请搜索出发城市"
           @select="SelectDepartCity"
           :trigger-on-focus="false"
+          @blur="handleDepartBlur"
         ></el-autocomplete>
       </el-form-item>
 
@@ -34,6 +35,7 @@
           placeholder="请搜索到达城市"
           @select="SelectDestCity"
           :trigger-on-focus="false"
+          @blur="handleDestBlur"
         ></el-autocomplete>
       </el-form-item>
 
@@ -88,7 +90,8 @@ export default {
         disabledDate(time) {
            return time.getTime() < Date.now();
         }
-      }
+      },
+      newData : []
     };
   },
   methods: {
@@ -105,33 +108,53 @@ export default {
     },
     //输入出发城市时触发
     querySearchDepartCity(query, cb) {
+      //如果没有输入则返回空数组
+      if(!query) {
+        cb([])
+        return
+      }
       //发送请求获得实时机票城市
       this.$axios({
         url : '/airs/city',
         params : {name : query}
       }).then(res => {
-        // console.log(res)
+        console.log(res)
         if(res.status === 200) {
           //把返回的数据放到选项上需要属性value
           const {data} = res.data
-          data.forEach(e => {
-            e.value = e.name.replace('市','')
-            // this.searchForm.departCode = e.sort
+          // data.forEach(e => {
+          //   e.value = e.name.replace('市','')
+          //   this.searchForm.departCode = e.sort
+          // })
+          this.newData = data.map(e => {
+            return {
+              ...e,
+              value : e.name.replace('市','')
+            }
           })
-          //当没有点击选项的时候,默认设置出发城市的编码为第一个
-          this.searchForm.departCode = data[0].sort
-          cb(data)
+          console.log(this.newData)
+          cb(this.newData)
         }
       })
     },
     //点击选中出发城市时触发
     SelectDepartCity(item) {
       // console.log(item);
-      //点击的时候,需要赋值编码
+      //点击的时候,把选项的值设置给form
+      this.searchForm.departCity = item.value
       this.searchForm.departCode = item.sort
+    },
+    //如果用户没有点击选中选项,在失焦的时候默认选中第一项
+    handleDepartBlur() {
+      this.searchForm.departCity = this.newData[0].value
+      this.searchForm.departCode = this.newData[0].sort
     },
     //输入到达城市时触发
     querySearchDestCity(query, cb) {
+      if(!query) {
+        cb([])
+        return
+      }
       this.$axios({
         url : '/airs/city',
         params : {name : query}
@@ -139,20 +162,30 @@ export default {
         // console.log(res)
         if(res.status === 200) {
           const {data} = res.data
-          data.forEach(e => {
-            e.value = e.name.replace('市','')
-            // this.searchForm.destCode = e.sort
+          // data.forEach(e => {
+          //   e.value = e.name.replace('市','')
+          //   // this.searchForm.destCode = e.sort
+          // })
+          this.newData= data.map(e => {
+            return {
+              ...e,
+              value : e.name.replace('市','')
+            }
           })
-          //当没有点击选项的时候,默认设置到达城市的编码为第一个
-          this.searchForm.destCode = data[0].sort
-          cb(data)
+          cb(this.newData)
         }
       })
     },
     //点击选中触发城市时触发
     SelectDestCity(item) {
       // console.log(item);
+      this.searchForm.destCity = item.value
       this.searchForm.destCode = item.sort
+    },
+    //如果用户没有点击选中项,在失焦的时候默认选中第一项
+    handleDestBlur() {
+      this.searchForm.destCity = this.newData[0].value
+      this.searchForm.destCode = this.newData[0].sort
     },
     //选择出发时间时触发
     handelDepartDate(time) {
@@ -161,6 +194,7 @@ export default {
     },
     //搜索时触发
     handleSearch() {
+      console.log(this.searchForm)
       const {departCity,destCity,departDate} = this.searchForm
       if(!departCity) {
          this.$alert('请选择出发城市','提示',{
