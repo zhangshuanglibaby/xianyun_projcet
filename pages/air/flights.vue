@@ -9,7 +9,7 @@
         <FlightsListHead />
 
         <!-- 航班信息 -->
-        <FlightsItem v-for="(item,index) in newFlightsList" :key="index" :data="item" />
+        <FlightsItem v-for="(item,index) in flightsList" :key="index" :data="item" />
 
         <!--分页-->
         <el-row type="flex" justify="center">
@@ -20,7 +20,7 @@
             :page-sizes="[5, 10, 15, 20]"
             :page-size="pageSize"
             layout="total, sizes, prev, pager, next, jumper"
-            :total="total"
+            :total="flightsData.total"
           ></el-pagination>
         </el-row>
       </div>
@@ -41,33 +41,26 @@ export default {
   },
   data() {
     return {
-      flightsList: [],
+      flightsData: {},
       pageIndex: 1,
       pageSize: 5,
-      total: 0,
-      newFlightsList: []
+      flightsList: []
     };
   },
   methods: {
     init() {
       const start = (this.pageIndex - 1) * this.pageSize;
       const end = start + this.pageSize;
-      this.newFlightsList = this.flightsList.slice(start, end);
+      this.flightsList = this.flightsData.flights.slice(start, end);
     },
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
       this.pageSize = val;
-      // const start = (this.pageIndex - 1) * this.pageSize;
-      // const end = start + this.pageSize;
-      // this.newFlightsList = this.flightsList.slice(start, end);
       this.init()
     },
     handleCurrentChange(val) {
       // console.log(`当前页: ${val}`);
       this.pageIndex = val;
-      // const start = (this.pageIndex - 1) * this.pageSize;
-      // const end = start + this.pageSize;
-      // this.newFlightsList = this.flightsList.slice(start, end);
       this.init()
     }
   },
@@ -80,8 +73,7 @@ export default {
     }).then(res => {
       console.log(res);
       if (res.status === 200) {
-        this.flightsList = res.data.flights;
-        this.total = res.data.flights.length;
+        this.flightsData = res.data
         this.init()
       }
     });

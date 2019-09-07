@@ -39,7 +39,9 @@
         <el-col :span="6" v-for="(item,index) in airSaleList" 
         :key="index" 
         class="air-sale-list">
-          <nuxt-link to="#">
+          <nuxt-link :to="`air/flights?departCity=${item.departCity}&
+          departCode=${item.departCode}&destCity=${item.destCity}&destCode=${item.destCode}
+          &departDate=${item.departDate}`">
             <img :src="item.cover" alt />
             <el-row type="flex" justify="space-around" class="air-sale-price">
               <span style="fontSize : 14px">{{item.departCity + '-' + item.destCity}}</span>

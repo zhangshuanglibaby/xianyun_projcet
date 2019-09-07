@@ -146,6 +146,9 @@ export default {
     },
     //如果用户没有点击选中选项,在失焦的时候默认选中第一项
     handleDepartBlur() {
+      if(!this.searchForm.departCity) {
+        return
+      }
       this.searchForm.departCity = this.newData[0].value
       this.searchForm.departCode = this.newData[0].sort
     },
@@ -184,6 +187,9 @@ export default {
     },
     //如果用户没有点击选中项,在失焦的时候默认选中第一项
     handleDestBlur() {
+      if(!this.searchForm.destCity) {
+        return
+      }
       this.searchForm.destCity = this.newData[0].value
       this.searchForm.destCode = this.newData[0].sort
     },
@@ -194,7 +200,7 @@ export default {
     },
     //搜索时触发
     handleSearch() {
-      // console.log(this.searchForm)
+      console.log(this.searchForm)
       const {departCity,destCity,departDate} = this.searchForm
       if(!departCity) {
          this.$alert('请选择出发城市','提示',{
