@@ -1,7 +1,12 @@
 <template>
   <section class="container">
     <!-- 航班列表的渲染 -->
-    <el-row type="flex" align="middle" class="flight-info" @click.native="isShowSeatInfos=!isShowSeatInfos">
+    <el-row
+      type="flex"
+      align="middle"
+      class="flight-info"
+      @click.native="isShowSeatInfos=!isShowSeatInfos"
+    >
       <el-col :span="6">{{data.airline_name+data.flight_no}}</el-col>
       <el-col :span="12">
         <el-row type="flex" justify="space-between" class="flight-info-center">
@@ -26,17 +31,22 @@
         起
       </el-col>
     </el-row>
+
     <!-- 控制列表的展开 -->
     <el-row type="flex" justify align="middle" class="flight-recommend" v-show="isShowSeatInfos">
       <el-col :span="4">低价推荐</el-col>
       <el-col :span="20">
-        <el-row type="flex" 
-        justify align="middle"
-         class="flight-sale"
-         v-for="(item,index) in data.seat_infos"
-         :key="index">
+        <el-row
+          type="flex"
+          justify
+          align="middle"
+          class="flight-sale"
+          v-for="(item,index) in data.seat_infos"
+          :key="index"
+        >
           <el-col :span="16" class="flight-sale-name">
-            <span>{{item.group_name}}</span> |{{item.supplierName}}
+            <span>{{item.group_name}}</span>
+            |{{item.supplierName}}
           </el-col>
           <el-col :span="5" class="seat-price">￥{{item.par_price}}</el-col>
           <el-col :span="3" class="chooseBtn">
@@ -46,6 +56,7 @@
         </el-row>
       </el-col>
     </el-row>
+
   </section>
 </template>
 <script>
@@ -59,8 +70,8 @@ export default {
   },
   data() {
     return {
-      isShowSeatInfos : false
-    }
+      isShowSeatInfos: false
+    };
   },
   computed: {
     //计算起飞到到达的中间时间差
@@ -121,7 +132,7 @@ export default {
   .flight-recommend {
     padding: 0 20px;
     background-color: #f6f6f6;
-    border-top : 1px solid #ddd;
+    border-top: 1px solid #ddd;
     .flight-sale {
       padding: 10px 0;
     }
@@ -137,8 +148,8 @@ export default {
     }
     .chooseBtn {
       button {
-      width: 100%;
-      margin-bottom: 5px;
+        width: 100%;
+        margin-bottom: 5px;
       }
       p {
         color: #666;
