@@ -118,7 +118,7 @@ export default {
         url : '/airs/city',
         params : {name : query}
       }).then(res => {
-        console.log(res)
+        // console.log(res)
         if(res.status === 200) {
           //把返回的数据放到选项上需要属性value
           const {data} = res.data
@@ -132,7 +132,7 @@ export default {
               value : e.name.replace('市','')
             }
           })
-          console.log(this.newData)
+          // console.log(this.newData)
           cb(this.newData)
         }
       })
@@ -194,7 +194,7 @@ export default {
     },
     //搜索时触发
     handleSearch() {
-      console.log(this.searchForm)
+      // console.log(this.searchForm)
       const {departCity,destCity,departDate} = this.searchForm
       if(!departCity) {
          this.$alert('请选择出发城市','提示',{
