@@ -10,7 +10,7 @@
             <span>{{data.org_airport_name+data.org_airport_quay}}</span>
           </el-col>
           <el-col :span="8" class="flight-time">
-            <span>2时20分</span>
+            <span>{{disTime}}</span>
           </el-col>
           <el-col :span="8">
             <strong>{{data.arr_time}}</strong>
@@ -34,6 +34,22 @@ export default {
     data: {
       type: Object,
       default: {}
+    }
+  },
+  data() {
+    return{}
+  },
+  computed : {
+    //计算起飞到到达的中间时间差
+    disTime() {
+      const depTimeArr = this.data.dep_time.split(':') //["20","30"] ["20","20"]
+      const arrTimeArr = this.data.arr_time.split(':') //["22","50"] ["22","05"]
+      if(arrTimeArr[0] === '00') {
+        arrTimeArr[0] = "24"
+      }
+      const depVal = depTimeArr[0] * 60 + Number(depTimeArr[1])  //20*60 + 20 = 1220分钟
+      const arrVal = arrTimeArr[0] * 60 + Number(arrTimeArr[1])  //22*60 + 5 = 1325分钟
+      return Math.floor((arrVal-depVal)/60) + '小时' + (arrVal-depVal) % 60 + '分'
     }
   }
 };
