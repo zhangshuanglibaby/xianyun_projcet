@@ -223,7 +223,15 @@ export default {
         })
         return
       }
-      console.log(this.searchForm)
+      //需要把数据也存储到本地里面 -- 机票列表的历史查询需要使用
+      //需要先读取本地存储查看是否有数据  -- 存储的方式是数组对象
+      // let arr = JSON.parse(localStorage.getItem('historyQuery')) || []
+      // arr.push(this.searchForm)
+      // localStorage.setItem('historyQuery',JSON.stringify(arr))
+      // console.log(this.searchForm)
+
+      //使用vuex 管理
+      this.$store.commit('history/setAirsData',this.searchForm)
       //发送请求接口
       this.$axios({
         url : '/airs',

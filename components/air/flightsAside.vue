@@ -19,19 +19,33 @@
       </div>
       <div class="history">
         <h3>历史查询</h3>
-          <el-row type="flex" justify="space-between" class="history-item" align="middle">
+        <nuxt-link :to="`/air/flights?departCity=${item.departCity}&departCode=${item.departCode}&destCity=${item.destCity}&destCode=${item.destCode}&departDate=${item.departDate}`"
+          v-for="(item,index) in $store.state.history.airs"
+           :key="index">
+          <el-row type="flex"
+           justify="space-between" 
+           class="history-item" 
+           align="middle">
               <div class="air-info">
-                <div class="to-from">广州 - 上海</div>
-                <p>2019-09-13</p>
+                <div class="to-from">{{item.departCity}} - {{item.destCity}}</div>
+                <p>{{item.departDate}}</p>
               </div>   
-              <span class="chooseBtn">选择</span>    
+              <span class="chooseBtn">选择</span>
           </el-row>
+        </nuxt-link>
       </div>
     </div>
 </template>
 <script>
 export default {
-    
+    // data() {
+    //   return {
+    //     historyItem : []
+    //   }
+    // },
+    // mounted() {
+    //   this.historyItem = localStorage.getItem('historyQuery')
+    // }
 }
 </script>
 <style lang="less" scoped>
@@ -89,7 +103,6 @@ export default {
         line-height: 20px;
         text-align: center;
         font-size: 12px;
-        cursor: pointer;
         border-radius: 4px 4px 4px 4px;
       }
     }

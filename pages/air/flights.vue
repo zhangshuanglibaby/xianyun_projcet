@@ -62,6 +62,21 @@ export default {
     };
   },
   methods: {
+    //封装获取机票列表数据
+    getData() {
+      this.$axios({
+      url: "/airs",
+      params: this.$route.query
+    }).then(res => {
+      console.log(res);
+      if (res.status === 200) {
+        this.total = res.data.total
+        this.flightsData = res.data
+        this.newFlightsData = {...this.flightsData}
+        this.init()
+      }
+    });
+    },
     init() {
       const start = (this.pageIndex - 1) * this.pageSize;
       const end = start + this.pageSize;
@@ -85,21 +100,16 @@ export default {
       this.init()
     }
   },
+  watch : {
+    '$route'() {
+      // console.log(this.$route)
+      this.getData()
+    }
+  },
   mounted() {
     // console.log(this.$route)
     //获取机票列表数据
-    this.$axios({
-      url: "/airs",
-      params: this.$route.query
-    }).then(res => {
-      console.log(res);
-      if (res.status === 200) {
-        this.total = res.data.total
-        this.flightsData = res.data
-        this.newFlightsData = {...this.flightsData}
-        this.init()
-      }
-    });
+    this.getData()
   }
 };
 </script>
