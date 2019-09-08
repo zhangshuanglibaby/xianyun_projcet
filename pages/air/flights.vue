@@ -3,7 +3,7 @@
     <el-row type="flex" justify="space-between">
       <div class="flights-content">
         <!-- 过滤条件 -->
-        <div></div>
+        <FlightsFilters :filtersData="flightsData.options"/>
 
         <!-- 头部布局 -->
         <FlightsListHead />
@@ -33,18 +33,23 @@
 <script>
 import FlightsListHead from "@/components/air/flightsListHead";
 import FlightsItem from "@/components/air/flightsItem";
+import FlightsFilters from '@/components/air/flightsFilters'
 export default {
   //注册组件
   components: {
     FlightsListHead,
-    FlightsItem
+    FlightsItem,
+    FlightsFilters
   },
   data() {
     return {
-      flightsData: {},
+      //存储大数据
+      flightsData: {
+        options : {}   //由于代码是从上往下的执行的,在上面给子组件传值的时候,也许大数据还没有获取到值,此时的options会是undefined,会报错
+      },  
       pageIndex: 1,
       pageSize: 5,
-      flightsList: []
+      flightsList: [] //航班信息数据
     };
   },
   methods: {
@@ -84,7 +89,7 @@ export default {
 .flights {
   // min-width: 1000px;
   width: 1000px;
-  margin: 0 auto;
+  margin: 20px auto;
 }
 .flights-content {
   width: 745px;
