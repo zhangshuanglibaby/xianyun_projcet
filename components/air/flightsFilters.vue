@@ -1,7 +1,7 @@
 <template>
   <section class="filters">
     <el-row type="flex" justify align="middle" class="filters-top">
-      <el-col :span="8">单程 : 广州 - 上海 / 2019-09-08</el-col>
+      <el-col :span="8">{{`单程 : ${filtersData.info.departCity} - ${filtersData.info.destCity} / ${filtersData.info.departDate}`}}</el-col>
       <el-col :span="4" class="filter-select">
         <el-select v-model="filterForm.airport" placeholder="起飞机场" size="mini" @change="handleAirport">
           <el-option
@@ -33,7 +33,7 @@
         </el-select>
       </el-col>
       <el-col :span="4" class="filter-select">
-        <el-select v-model="filterForm.planeSize" placeholder="机型" size="mini" @change="handlePlaneSize">
+        <el-select v-model="filterForm.plane_size" placeholder="机型" size="mini" @change="handlePlaneSize">
           <el-option
             v-for="(item,index) in planeSizeData"
             :key="index"
@@ -46,7 +46,7 @@
     </el-row>
     <div class="filters-cancel">
       <span>筛选 :</span>
-       <el-button type="primary" plain round size="mini">撤销</el-button>
+       <el-button type="primary" plain round size="mini" @click="handleCancel">撤销</el-button>
 
     </div>
   </section>
@@ -72,7 +72,7 @@ export default {
       airport :'', //起飞机场
       flightTimes : '',//起飞时间
       company : '', //航空公司
-      planeSize :''
+      plane_size :''
       }
     }
   },
@@ -109,6 +109,12 @@ export default {
         return e.plane_size === val
       })
       this.$emit('setFListtByFilters',arr)
+    },
+    //点击撤销触发
+    handleCancel() {
+      for(var key in this.filterForm) {
+        this.filterForm[key] = ""
+      }
     }
   }
 }
