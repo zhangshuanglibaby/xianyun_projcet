@@ -3,7 +3,7 @@
     <el-row type="flex" justify="space-between">
       <div class="flights-content">
         <!-- 过滤条件 -->
-        <FlightsFilters :filtersData="flightsData.options"/>
+        <FlightsFilters :filtersData="newFlightsData" @setFListtByFilters="setFListtByFilters" />
 
         <!-- 头部布局 -->
         <FlightsListHead />
@@ -20,7 +20,7 @@
             :page-sizes="[5, 10, 15, 20]"
             :page-size="pageSize"
             layout="total, sizes, prev, pager, next, jumper"
-            :total="flightsData.total"
+            :total="total"
           ></el-pagination>
         </el-row>
       </div>
@@ -47,9 +47,14 @@ export default {
       flightsData: {
         options : {}   //由于代码是从上往下的执行的,在上面给子组件传值的时候,也许大数据还没有获取到值,此时的options会是undefined,会报错
       },  
+      //需要用多一个变量来存储大数据,航班列表渲染就用这个变量渲染
+      newFlightsData : {
+        options :{}
+      },
       pageIndex: 1,
       pageSize: 5,
-      flightsList: [] //航班信息数据
+      total : 0,
+      flightsList: [], //航班信息数据
     };
   },
   methods: {
@@ -67,6 +72,13 @@ export default {
       // console.log(`当前页: ${val}`);
       this.pageIndex = val;
       this.init()
+    },
+    //子组件传值会触发
+    setFListtByFilters(arr) {
+      this.flightsData.flights = arr
+      this.total = arr.length
+      this.pageIndex = 1
+      this.init()
     }
   },
   mounted() {
@@ -78,7 +90,9 @@ export default {
     }).then(res => {
       console.log(res);
       if (res.status === 200) {
+        this.total = res.data.total
         this.flightsData = res.data
+        this.newFlightsData = {...this.flightsData}
         this.init()
       }
     });
