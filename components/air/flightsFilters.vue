@@ -115,6 +115,7 @@ export default {
       for(var key in this.filterForm) {
         this.filterForm[key] = ""
       }
+      this.$emit('setFListtByFilters',this.filtersData.flights)
     }
   }
 }
