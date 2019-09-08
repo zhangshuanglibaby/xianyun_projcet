@@ -26,7 +26,7 @@
       </div>
 
       <!-- 右侧栏布局 -->
-      <div class="aside"></div>
+      <FlightsAside />
     </el-row>
   </section>
 </template>
@@ -34,22 +34,26 @@
 import FlightsListHead from "@/components/air/flightsListHead";
 import FlightsItem from "@/components/air/flightsItem";
 import FlightsFilters from '@/components/air/flightsFilters'
+import FlightsAside from '@/components/air/flightsAside'
 export default {
   //注册组件
   components: {
     FlightsListHead,
     FlightsItem,
-    FlightsFilters
+    FlightsFilters,
+    FlightsAside
   },
   data() {
     return {
       //存储大数据
       flightsData: {
-        options : {}   //由于代码是从上往下的执行的,在上面给子组件传值的时候,也许大数据还没有获取到值,此时的options会是undefined,会报错
+        options : {} ,
+        info : {}  //由于代码是从上往下的执行的,在上面给子组件传值的时候,也许大数据还没有获取到值,此时的options会是undefined,会报错
       },  
       //需要用多一个变量来存储大数据,航班列表渲染就用这个变量渲染
       newFlightsData : {
-        options :{}
+        options :{},
+        info : {}
       },
       pageIndex: 1,
       pageSize: 5,
