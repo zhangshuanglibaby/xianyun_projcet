@@ -200,7 +200,7 @@ export default {
     },
     //搜索时触发
     handleSearch() {
-      console.log(this.searchForm)
+      // console.log(this.searchForm)
       const {departCity,destCity,departDate} = this.searchForm
       if(!departCity) {
          this.$alert('请选择出发城市','提示',{
@@ -223,12 +223,11 @@ export default {
         })
         return
       }
-      //需要把数据也存储到本地里面 -- 机票列表的历史查询需要使用
-      //需要先读取本地存储查看是否有数据  -- 存储的方式是数组对象
-      // let arr = JSON.parse(localStorage.getItem('historyQuery')) || []
+      //由于历史查询需要这里的值,可以通过本地数据获取
+      //每次存储本地数据前,需要获取,检测是否有数据,无则给空数组
+      // const arr = JSON.parse(localStorage.getItem('historyQuery') || '[]')
       // arr.push(this.searchForm)
       // localStorage.setItem('historyQuery',JSON.stringify(arr))
-      // console.log(this.searchForm)
 
       //使用vuex 管理
       this.$store.commit('history/setAirsData',this.searchForm)

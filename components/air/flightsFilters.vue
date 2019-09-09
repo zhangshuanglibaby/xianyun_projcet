@@ -1,11 +1,11 @@
 <template>
   <section class="filters">
     <el-row type="flex" justify align="middle" class="filters-top">
-      <el-col :span="8">{{`单程 : ${filtersData.info.departCity} - ${filtersData.info.destCity} / ${filtersData.info.departDate}`}}</el-col>
+      <el-col :span="8">单程 :广州 - 上海 / 2019-9-9</el-col>
       <el-col :span="4" class="filter-select">
-        <el-select v-model="filterForm.airport" placeholder="起飞机场" size="mini" @change="handleAirport">
+        <el-select v-model="filtersForm.airport" placeholder="起飞机场" size="mini" @change="handleAirport">
           <el-option
-            v-for="(item,index) in filtersData.options.airport"
+            v-for="(item,index) in flightsData.options.airport"
             :key="index"
             :label="item"
             :value="item"
@@ -13,9 +13,9 @@
         </el-select>
       </el-col>
       <el-col :span="4" class="filter-select">
-        <el-select v-model="filterForm.flightTimes" placeholder="起飞时间" size="mini" @change="handleFlightTimes"> 
+        <el-select v-model="filtersForm.flightTimes" placeholder="起飞时间" size="mini" @change="handleFlightTimes">
           <el-option
-            v-for="(item,index) in filtersData.options.flightTimes"
+            v-for="(item,index) in flightsData.options.flightTimes"
             :key="index"
             :label="`${item.from}:00 - ${item.to}:00`"
             :value="`${item.from},${item.to}`"
@@ -23,9 +23,14 @@
         </el-select>
       </el-col>
       <el-col :span="4" class="filter-select">
-        <el-select v-model="filterForm.company" placeholder="航空公司" size="mini" @change="handleCompany">
+        <el-select
+          v-model="filtersForm.company"
+          placeholder="航空公司"
+          size="mini"
+          @change="handleCompany"
+        >
           <el-option
-            v-for="(item,index) in filtersData.options.company"
+            v-for="(item,index) in flightsData.options.company"
             :key="index"
             :label="item"
             :value="item"
@@ -33,21 +38,24 @@
         </el-select>
       </el-col>
       <el-col :span="4" class="filter-select">
-        <el-select v-model="filterForm.plane_size" placeholder="机型" size="mini" @change="handlePlaneSize">
+        <el-select
+          v-model="filtersForm.plane_size"
+          placeholder="机型"
+          size="mini"
+          @change="handlePlaneSize"
+        >
           <el-option
             v-for="(item,index) in planeSizeData"
             :key="index"
             :label="item.label"
             :value="item.value"
-          >
-          </el-option>
+          ></el-option>
         </el-select>
       </el-col>
     </el-row>
     <div class="filters-cancel">
       <span>筛选 :</span>
-       <el-button type="primary" plain round size="mini" @click="handleCancel">撤销</el-button>
-
+      <el-button type="primary" plain round size="mini" @click="handleCancel">撤销</el-button>
     </div>
   </section>
 </template>
@@ -55,70 +63,77 @@
 export default {
   //定义接收的变量参数
   props : {
-    filtersData : {
+    flightsData : {
       type : Object,
       default : {}
     }
   },
   data() {
     return {
-      //定义机型大小
-      planeSizeData : [
+      //定义机型参数
+      planeSizeData:[
         {label : '大',value : 'L'},
         {label : '中',value : 'M'},
         {label : '小',value : 'S'}
       ],
-      filterForm : {
-      airport :'', //起飞机场
-      flightTimes : '',//起飞时间
-      company : '', //航空公司
-      plane_size :''
+      //定义选项绑定的数据
+      filtersForm : {
+        airport : '',
+        flightTimes : '',
+        company : '',
+        plane_size : ''
       }
-    }
+    };
   },
   methods : {
-    //选择起飞机场会触发
+    //选择起飞机场时触发
     handleAirport(val) {
       // console.log(val)
-      //需要遍历航班列表信息,寻找对应机场
-      let arr = this.filtersData.flights.filter(e => {
+      //需要筛选数据
+      const arr = this.flightsData.flights.filter(e => {
         return e.org_airport_name === val
       })
-      // console.log(arr)
-      this.$emit('setFListtByFilters',arr)
+      //把值传递给父组件
+      this.$emit('setFlightsList',arr)
     },
     //选择起飞时间会触发
     handleFlightTimes(val) {
-      const currentTime = val.split(',') // ["6","12"]
-      let arr = this.filtersData.flights.filter(e => {
-        return +e.dep_time.split(':')[0] >= +currentTime[0] && +e.dep_time.split(':')[0] < +currentTime[1]
+      // console.log(val)
+      const start = val.split(',')
+      const arr = this.flightsData.flights.filter(e => {
+        return +e.dep_time.split(':')[0] >= +start[0] && +e.dep_time.split(':')[0] < +start[1]
       })
-      this.$emit('setFListtByFilters',arr)
+      this.$emit('setFlightsList',arr)
     },
     //选择航空公司会触发
     handleCompany(val) {
-      let arr = this.filtersData.flights.filter(e => {
+      // console.log(val)
+      const arr = this.flightsData.flights.filter(e => {
         return e.airline_name === val
       })
-      this.$emit('setFListtByFilters',arr)
+      //把值传递给组件
+      this.$emit('setFlightsList',arr)
     },
     //选择机型会触发
     handlePlaneSize(val) {
       // console.log(val)
-      let arr = this.filtersData.flights.filter(e => {
+     const arr = this.flightsData.flights.filter(e => {
         return e.plane_size === val
       })
-      this.$emit('setFListtByFilters',arr)
+      this.$emit('setFlightsList',arr)
     },
-    //点击撤销触发
+    //点击撤销会触发
     handleCancel() {
-      for(var key in this.filterForm) {
-        this.filterForm[key] = ""
+      //把filtersForm的数初始化 ---利用对象遍历
+      for(let key in this.filtersForm) {
+        this.filtersForm[key] = ''
       }
-      this.$emit('setFListtByFilters',this.filtersData.flights)
+      //传递原始数据回去
+      this.$emit('setFlightsList',this.flightsData.flights)
+      
     }
   }
-}
+};
 </script>
 <style lang="less" scoped>
 .filters {

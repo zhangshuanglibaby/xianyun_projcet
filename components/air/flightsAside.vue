@@ -38,14 +38,15 @@
 </template>
 <script>
 export default {
-    // data() {
-    //   return {
-    //     historyItem : []
-    //   }
-    // },
-    // mounted() {
-    //   this.historyItem = localStorage.getItem('historyQuery')
-    // }
+    data() {
+      return {
+        //定义变量存储本地获取的数据
+        historyItem : []
+      }
+    },
+    mounted() {
+      this.historyItem = JSON.parse(localStorage.getItem('historyQuery'))
+    }
 }
 </script>
 <style lang="less" scoped>

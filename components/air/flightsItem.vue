@@ -5,8 +5,7 @@
       type="flex"
       align="middle"
       class="flight-info"
-      @click.native="isShowSeatInfos=!isShowSeatInfos"
-    >
+      @click.native="isShowSeatInfos=!isShowSeatInfos">
       <el-col :span="6">{{data.airline_name+data.flight_no}}</el-col>
       <el-col :span="12">
         <el-row type="flex" justify="space-between" class="flight-info-center">
@@ -31,7 +30,6 @@
         起
       </el-col>
     </el-row>
-
     <!-- 控制列表的展开 -->
     <el-row type="flex" justify align="middle" class="flight-recommend" v-show="isShowSeatInfos">
       <el-col :span="4">低价推荐</el-col>
@@ -56,7 +54,6 @@
         </el-row>
       </el-col>
     </el-row>
-
   </section>
 </template>
 <script>
