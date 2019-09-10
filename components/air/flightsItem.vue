@@ -46,9 +46,11 @@
             <span>{{item.group_name}}</span>
             |{{item.supplierName}}
           </el-col>
-          <el-col :span="5" class="seat-price">￥{{item.par_price}}</el-col>
+          <el-col :span="5" class="seat-price">￥{{item.settle_price}}</el-col>
           <el-col :span="3" class="chooseBtn">
+            <nuxt-link :to="`/air/order?id=${data.id}&seat_xid=${item.seat_xid}`">
             <el-button type="warning" size="mini">选定</el-button>
+            </nuxt-link>
             <p>剩余 : {{item.discount}}</p>
           </el-col>
         </el-row>

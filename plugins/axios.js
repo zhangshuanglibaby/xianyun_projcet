@@ -16,5 +16,11 @@ export default({$axios}) => {
        if(statusCode === 400) {
            Message.error(message)
        }
+       if(statusCode === 401 || statusCode === 403) {
+        Message.error('请先登录或注册账号')
+        setTimeout(() => {
+            location.href = "/user/login"
+        },1000)
+    }
     })
 }

@@ -55,6 +55,7 @@ export default {
             //this.$store.commit(模块/mutations的方法名,参数)
               this.$store.commit('user/setUserInfo',res.data)
               this.$message.success('登录成功')
+              this.$router.back()
             } 
           }).catch(() => {
             // this.$message.error('用户名或密码错误')

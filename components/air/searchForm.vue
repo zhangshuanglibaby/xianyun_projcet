@@ -230,7 +230,7 @@ export default {
       // localStorage.setItem('historyQuery',JSON.stringify(arr))
 
       //使用vuex 管理
-      this.$store.commit('history/setAirsData',this.searchForm)
+      this.$store.commit('air/setAirsData',this.searchForm)
       //发送请求接口
       this.$axios({
         url : '/airs',
