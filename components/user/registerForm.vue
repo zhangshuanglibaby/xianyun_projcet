@@ -134,11 +134,6 @@ export default {
             }else {
               this.$message.error('注册失败')
             }
-          }).catch(() => {
-            // if(this.code !== this.registerForm.captcha) {
-            //   this.$message.warning('手机验证码错误')
-            // }
-            //错误拦截器会处理
           })
         }else {
           this.$message.error('请把必填的信息完善')

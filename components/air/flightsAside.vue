@@ -41,11 +41,12 @@ export default {
     data() {
       return {
         //定义变量存储本地获取的数据
-        historyItem : []
+        // historyItem : []
       }
     },
     mounted() {
-      this.historyItem = JSON.parse(localStorage.getItem('historyQuery'))
+      //获取本地数据
+      // this.historyItem = JSON.parse(localStorage.getItem('historyQuery'))
     }
 }
 </script>

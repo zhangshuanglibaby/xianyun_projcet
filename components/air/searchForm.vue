@@ -149,8 +149,8 @@ export default {
       if(!this.searchForm.departCity) {
         return
       }
-      this.searchForm.departCity = this.newData[0].value
-      this.searchForm.departCode = this.newData[0].sort
+      this.searchForm.departCity = this.newData[0] ? this.newData[0].value : ""
+      this.searchForm.departCode = this.newData[0] ? this.newData[0].sort :""
     },
     //输入到达城市时触发
     querySearchDestCity(query, cb) {

@@ -146,6 +146,12 @@ export default {
 
     //发送验证码
     handleSendCaptchas() {
+      //检测手机是否为空
+      if(!this.orderForm.contactPhone) {
+        this.$message.error('请输入手机号码')
+        return 
+      }
+
       this.$axios({
         url : '/captchas',
         method : 'post',

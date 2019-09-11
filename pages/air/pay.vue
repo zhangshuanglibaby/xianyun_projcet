@@ -44,8 +44,7 @@ export default {
           const { code_url } = res.data.payInfo;
 
           QRCode.toCanvas(canvas, code_url, {
-            width :200
-            
+            width :200        
           });
         }
       });

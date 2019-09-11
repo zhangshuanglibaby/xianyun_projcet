@@ -51,12 +51,8 @@ export default {
       }
     }
   },
-  data() {
-    return {
-      
-    }
-  },
   computed : {
+    //计算时间差
     rankTime() {
       //数据还没有请求回来
       if(!this.data.dep_time) return ""
