@@ -3,7 +3,7 @@
     <div class="main">
       <div class="pay-title">
         支付总金额
-        <span class="pay-price">￥{{$store.state.air.allPrice}}</span>
+        <span class="pay-price">{{orderInfo.price}}</span>
       </div>
       <div class="pay-main">
         <h4>微信支付</h4>
@@ -25,6 +25,43 @@
 <script>
 import QRCode from "qrcode";
 export default {
+  data() {
+    return {
+      //存储返回的大数据
+      orderInfo : {
+        payInfo : {}
+      },
+      //清除定时器
+      timer :''
+    }
+  },
+  methods : {
+    //查看订单付款状况
+    checkPay() {
+      const {nonce_str,order_no} = this.orderInfo.payInfo
+      this.$axios({
+        url : '/airorders/checkpay',
+        method : 'post',
+        headers: {
+          Authorization: `Bearer ${this.$store.state.user.userInfo.token}`
+        },
+        data : {
+          id : this.$route.query.id,
+          nonce_str,
+          out_trade_no : order_no
+        }
+      }).then(res => {
+        console.log(res)
+        if(res.status === 200) {
+          if(res.data.statusTxt === '支付完成') {
+            //清除定时器
+            clearInterval(this.timer)
+          }
+        }
+      })
+    }
+  },
+
   mounted() {
     setTimeout(() => {
       // console.log(this.$route)
@@ -37,6 +74,7 @@ export default {
         }
       }).then(res => {
         console.log(res);
+        this.orderInfo = res.data
         if (res.status === 200) {
           //获取元素
           const canvas = document.getElementById("qrcode-stage");
@@ -46,9 +84,16 @@ export default {
           QRCode.toCanvas(canvas, code_url, {
             width :200        
           });
+
+        this.timer = setInterval(() => {
+            this.checkPay()
+          },3000)
         }
       });
     }, 100);
+  },
+  destroyed() {
+    clearInterval(this.timer)
   }
 };
 </script>
