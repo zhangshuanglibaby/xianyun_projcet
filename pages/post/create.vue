@@ -15,10 +15,12 @@
             <el-form-item label="选择城市" class="city">
               <i class="el-icon-location"></i>
               <el-autocomplete
-                v-model="state4"
-                :fetch-suggestions="querySearchAsync"
-                placeholder="请选择游玩城市"
+                v-model="addPost.city"
+                :fetch-suggestions="querySearchCity"
+                :trigger-on-focus="false"
+                placeholder="请搜索游玩城市"
                 @select="handleSelect"
+                @blur="handleBlur"
               ></el-autocomplete>
             </el-form-item>
           </el-form>
@@ -38,7 +40,7 @@
                 文字
                 <i class="el-icon-edit"></i>
               </div>
-               <p class="time">{{new Date() | timeFormat}}</p>
+              <p class="time">{{new Date() | timeFormat}}</p>
             </div>
             <div class="drafts-item">
               <div class="drafts-post-title">
@@ -55,7 +57,7 @@
 </template>
 <script>
 import "quill/dist/quill.snow.css";
-import moment from 'moment'
+import moment from "moment";
 let VueEditor;
 
 if (process.browser) {
@@ -111,7 +113,15 @@ export default {
           },
           uploadError() {}
         }
-      }
+      },
+      //绑定新增文章数据
+      addPost: {
+        content: "", //文章内容
+        title: "", //文章标题
+        city: "" //城市id/名称
+      },
+      //定义城市数据
+      cityData: []
     };
   },
   components: {
@@ -119,9 +129,45 @@ export default {
     VueEditor
   },
   //过滤器
-  filters : {
+  filters: {
     timeFormat(time) {
-      return moment(time).format('YYYY-MM-DD')
+      return moment(time).format("YYYY-MM-DD");
+    }
+  },
+  methods: {
+    //输入搜索游玩城市触发
+    querySearchCity(queryString, cb) {
+      // console.log(queryString)
+      //获取城市
+      this.$axios({
+        url: "/airs/city",
+        params: { name: queryString }
+      }).then(res => {
+        // console.log(res);
+        if (res.status === 200) {
+          this.cityData = res.data.data.map(e => {
+            return {
+              ...e,
+              value: e.name
+            };
+          });
+          cb(this.cityData);
+        }
+      });
+    },
+
+    //搜索游玩城市触发失焦触发
+    handleBlur() {
+      //当用户没有输全时默认第一个
+      if (this.addPost.city) {
+        this.addPost.city = this.cityData[0].name;
+      }
+    },
+
+    //选中下拉项时触发
+    handleSelect(obj) {
+      // console.log(obj)
+      this.addPost.city = obj.name
     }
   }
 };
@@ -187,7 +233,7 @@ export default {
         .drafts-item {
           margin-bottom: 10px;
           .drafts-post-title {
-            font-size: 14px;           
+            font-size: 14px;
           }
           .time {
             font-size: 14px;

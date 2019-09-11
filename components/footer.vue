@@ -2,7 +2,7 @@
   <div class="footer_warpper">
     <div class="footer">
         <el-row class="info_list">
-            <el-col :span="6" offset="1">
+            <el-col :span="6" :offset="1">
               <h5>闲云旅游旅游网</h5>
               <p>上亿旅行者共同打造的"旅行神器"</p>
               <p><span>60,000</span>多个全球旅游目的地</p>
