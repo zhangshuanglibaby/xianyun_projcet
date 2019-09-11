@@ -67,11 +67,12 @@ export default {
   width: 1000px;
   height: 60px;
   margin: 0 auto;
+  border-bottom: 1px solid #ddd;
 }
 
 .navs {
   flex: 1;
-  margin-left: 45px;
+  margin-left: 20px;
   a {
     display: block;
     padding: 0 20px;
