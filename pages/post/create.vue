@@ -10,7 +10,9 @@
               <el-input v-model="addPost.title" placeholder="请输入标题"></el-input>
             </el-form-item>
             <el-form-item class="textarea">
-              <VueEditor :config="config" ref="vueEditor" />
+              <div>
+                <VueEditor :config="config" ref="vueEditor" />
+              </div>
             </el-form-item>
             <el-form-item label="选择城市" class="city">
               <i class="el-icon-location"></i>
@@ -28,26 +30,24 @@
             <el-button type="primary" size="small" @click="handleAdd">发布</el-button>
             <span class="submit-text">
               或者
-              <a href="#">保存到草稿箱</a>
+              <a href="javascript:;" @click="handleSave">保存到草稿箱</a>
             </span>
           </div>
         </div>
         <div class="drafts-aside">
-          <h4>草稿箱 ( 1 )</h4>
+          <h4>草稿箱 ( {{$store.state.post.draftsTitle.length}} )</h4>
           <div class="drafts-list">
-            <div class="drafts-item">
+            <div
+              class="drafts-item"
+              v-for="(item,index) in $store.state.post.draftsTitle"
+              :key="index"
+              @click="handleTitle(index)"
+            >
               <div class="drafts-post-title">
-                文字
+                {{item.title}}
                 <i class="el-icon-edit"></i>
               </div>
               <p class="time">{{new Date() | timeFormat}}</p>
-            </div>
-            <div class="drafts-item">
-              <div class="drafts-post-title">
-                文字
-                <i class="el-icon-edit"></i>
-                <p class="time">{{new Date() | timeFormat}}</p>
-              </div>
             </div>
           </div>
         </div>
@@ -69,7 +69,7 @@ export default {
   name: "app",
   data() {
     //让this指向组件
-    var that = this
+    var that = this;
     return {
       //引入富文本框配置
       config: {
@@ -96,13 +96,12 @@ export default {
           //上传之前触发
           uploadBefore(file) {
             // console.log(file)
-            if(!file.type.startsWith("image/")) {
-              that.$message.warning('请选择正确的图片格式,如jpg/png/jpge')
+            if (!file.type.startsWith("image/")) {
+              that.$message.warning("请选择正确的图片格式,如jpg/png/jpge");
             }
-            return true
+            return true;
           },
-          uploadProgress(res) {
-          },
+          uploadProgress(res) {},
           uploadSuccess(res, insert) {
             insert("http://localhost:1337" + res.data[0].url);
             // console.log(res)
@@ -130,9 +129,7 @@ export default {
         content: "", //文章内容
         title: "", //文章标题
         city: "" //城市id/名称
-      },
-      //定义城市数据
-      cityData: []
+      }
     };
   },
   components: {
@@ -201,7 +198,7 @@ export default {
       //在循环里面找反例
       Object.keys(rules).forEach(v => {
         //只要有一个不成立即可停止
-        if(!valid) return
+        if (!valid) return;
 
         let item = rules[v];
 
@@ -214,7 +211,7 @@ export default {
         }
       });
 
-      if(!valid) return
+      if (!valid) return;
 
       this.$axios({
         url: "/posts",
@@ -228,12 +225,37 @@ export default {
         if (res.status === 200) {
           this.$message.success(res.data.message);
           //清空表单
-          this.$refs.vueEditor.editor.root.innerHTML = ""
-          for(let key in this.addPost) {
-            this.addPost[key] = ''
+          this.$refs.vueEditor.editor.root.innerHTML = "";
+          for (let key in this.addPost) {
+            this.addPost[key] = "";
           }
         }
       });
+    },
+
+    //保存到草稿箱
+    handleSave() {
+      //保存到草稿箱需要检测用户是否有登录
+      if (!this.$store.state.user.userInfo.token) {
+        this.$message.warning("请先登录");
+        this.$router.push({ path: "/user/login" });
+        return;
+      }
+      //注意的是需要倒序插入
+      //使用vuex管理数据
+      this.addPost.content = this.$refs.vueEditor.editor.root.innerHTML;
+      this.$store.commit("post/setDraftsTitle", this.addPost)
+      this.$message.success("已保存到草稿箱")
+      //刷新当前页面
+      location.reload()
+    },
+
+    //点击草稿箱的标题显示默认数据
+    handleTitle(index) {
+      let info = this.$store.state.post.draftsTitle
+      this.addPost.title = info[index].title
+      this.$refs.vueEditor.editor.root.innerHTML = info[index].content
+      this.addPost.city = info[index].city
     }
   }
 };
@@ -300,6 +322,10 @@ export default {
           margin-bottom: 10px;
           .drafts-post-title {
             font-size: 14px;
+            &:hover {
+              cursor: pointer;
+              color: #ffa500;
+            }
           }
           .time {
             font-size: 14px;
