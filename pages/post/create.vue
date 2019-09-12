@@ -7,7 +7,7 @@
           <p class="share">分享你的个人游记，让更多人看到哦！</p>
           <el-form ref="form" class="form">
             <el-form-item class="input-title">
-              <el-input v-model="addPost.title" placeholder="请输入标题"></el-input>
+              <el-input v-model="addPost.title" placeholder="请输入标题" v-myfocus></el-input>
             </el-form-item>
             <el-form-item class="textarea">
               <div>
@@ -35,17 +35,18 @@
           </div>
         </div>
         <div class="drafts-aside">
-          <h4>草稿箱 ( {{$store.state.post.draftsTitle.length}} )</h4>
+          <h4>草稿箱 ( {{draftsTitle.length}} )</h4>
           <div class="drafts-list">
             <div
               class="drafts-item"
-              v-for="(item,index) in $store.state.post.draftsTitle"
+              v-for="(item,index) in draftsTitle"
               :key="index"
               @click="handleTitle(index)"
             >
               <div class="drafts-post-title">
                 {{item.title}}
                 <i class="el-icon-edit"></i>
+                <i class="el-icon-remove delete" @click="handleDelete(index)"></i>
               </div>
               <p class="time">{{new Date() | timeFormat}}</p>
             </div>
@@ -58,7 +59,11 @@
 
 <script>
 import "quill/dist/quill.snow.css";
+//引入过滤器
 import { timeFormat } from "@/tools/myfilters";
+//引入自定义指令
+import { myfocus } from "@/tools/myDirectives";
+
 let VueEditor;
 
 if (process.browser) {
@@ -129,7 +134,9 @@ export default {
         content: "", //文章内容
         title: "", //文章标题
         city: "" //城市id/名称
-      }
+      },
+      //定义一个变量存储store的值
+      draftsTitle : []
     };
   },
   components: {
@@ -139,6 +146,10 @@ export default {
   //过滤器
   filters: {
     timeFormat
+  },
+  //自定义指令
+  directives: {
+    myfocus
   },
   methods: {
     //输入搜索游玩城市触发
@@ -244,19 +255,41 @@ export default {
       //注意的是需要倒序插入
       //使用vuex管理数据
       this.addPost.content = this.$refs.vueEditor.editor.root.innerHTML;
-      this.$store.commit("post/setDraftsTitle", this.addPost)
-      this.$message.success("已保存到草稿箱")
+      this.draftsTitle.unshift(this.addPost)
+      this.$store.commit("post/setDraftsTitle", this.draftsTitle);
+      this.$message.success("已保存到草稿箱");
       //刷新当前页面
-      location.reload()
+      location.reload();
     },
 
     //点击草稿箱的标题显示默认数据
     handleTitle(index) {
-      let info = this.$store.state.post.draftsTitle
-      this.addPost.title = info[index].title
-      this.$refs.vueEditor.editor.root.innerHTML = info[index].content
-      this.addPost.city = info[index].city
+      this.addPost.title = this.draftsTitle[index].title;
+      this.$refs.vueEditor.editor.root.innerHTML = this.draftsTitle[index].content;
+      this.addPost.city = this.draftsTitle[index].city;
+    },
+
+    //删除草稿箱
+    handleDelete(index) {
+      // console.log(index);
+      this.$confirm("确认删除此项草稿吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {          
+          this.draftsTitle.splice(index,1)
+          this.$store.commit("post/setDraftsTitle", this.draftsTitle)
+          this.$message.success('删除成功')
+          location.reload()
+      })
     }
+  },
+  mounted() {
+    setTimeout(() => {
+    this.draftsTitle = [...this.$store.state.post.draftsTitle] 
+    // console.log(this.draftsTitle)
+    },200)
   }
 };
 </script>
@@ -319,13 +352,25 @@ export default {
       }
       .drafts-list {
         .drafts-item {
+          &:hover {
+            cursor: pointer;
+            color: #ffa500;
+            .delete {
+              visibility: visible;
+              &:hover {
+                color: rgb(236, 60, 60);
+              }
+            }
+          }
           margin-bottom: 10px;
           .drafts-post-title {
             font-size: 14px;
-            &:hover {
-              cursor: pointer;
-              color: #ffa500;
-            }
+          }
+          .delete {
+            visibility: hidden;
+            margin-left: 40px;
+            font-size: 16px;
+            color: rgba(0, 0, 0, 0.4);
           }
           .time {
             font-size: 14px;

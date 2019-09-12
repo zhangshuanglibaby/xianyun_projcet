@@ -8,6 +8,6 @@ export const state = () => ({
 export const mutations = {
   //设置草稿箱标题
   setDraftsTitle(state,data) {
-    state.draftsTitle.unshift(data)
+    state.draftsTitle = data
   }
 }
