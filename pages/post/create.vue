@@ -5,9 +5,9 @@
         <div class="publish">
           <h2 class="title">发表新攻略</h2>
           <p class="share">分享你的个人游记，让更多人看到哦！</p>
-          <el-form ref="form" :model="form" class="form">
+          <el-form ref="form" class="form">
             <el-form-item class="input-title">
-              <el-input v-model="input" placeholder="请输入标题"></el-input>
+              <el-input v-model="addPost.title" placeholder="请输入标题"></el-input>
             </el-form-item>
             <el-form-item class="textarea">
               <VueEditor :config="config" ref="vueEditor" />
@@ -25,7 +25,7 @@
             </el-form-item>
           </el-form>
           <div class="submit-btn">
-            <el-button type="primary" size="small">发布</el-button>
+            <el-button type="primary" size="small" @click="handleAdd">发布</el-button>
             <span class="submit-text">
               或者
               <a href="#">保存到草稿箱</a>
@@ -55,9 +55,10 @@
     </div>
   </div>
 </template>
+
 <script>
 import "quill/dist/quill.snow.css";
-import moment from "moment";
+import { timeFormat } from "@/tools/myfilters";
 let VueEditor;
 
 if (process.browser) {
@@ -67,6 +68,8 @@ if (process.browser) {
 export default {
   name: "app",
   data() {
+    //让this指向组件
+    var that = this
     return {
       //引入富文本框配置
       config: {
@@ -89,15 +92,23 @@ export default {
         uploadImage: {
           url: "http://localhost:1337/upload",
           name: "files",
+
+          //上传之前触发
           uploadBefore(file) {
-            return true;
+            // console.log(file)
+            if(!file.type.startsWith("image/")) {
+              that.$message.warning('请选择正确的图片格式,如jpg/png/jpge')
+            }
+            return true
           },
-          uploadProgress(res) {},
+          uploadProgress(res) {
+          },
           uploadSuccess(res, insert) {
             insert("http://localhost:1337" + res.data[0].url);
+            // console.log(res)
           },
           uploadError() {},
-          showProgress: false
+          showProgress: true
         },
 
         uploadVideo: {
@@ -130,9 +141,7 @@ export default {
   },
   //过滤器
   filters: {
-    timeFormat(time) {
-      return moment(time).format("YYYY-MM-DD");
-    }
+    timeFormat
   },
   methods: {
     //输入搜索游玩城市触发
@@ -167,7 +176,64 @@ export default {
     //选中下拉项时触发
     handleSelect(obj) {
       // console.log(obj)
-      this.addPost.city = obj.name
+      this.addPost.city = obj.name;
+    },
+
+    //发布文章
+    handleAdd() {
+      this.addPost.content = this.$refs.vueEditor.editor.root.innerHTML;
+      // console.log(this.addPost)
+      //非空检测
+      const rules = {
+        title: {
+          value: this.addPost.title,
+          message: "请输入标题"
+        },
+        city: {
+          value: this.addPost.city,
+          message: "请选择城市"
+        }
+      };
+
+      //先假设结果成立
+      let valid = true;
+
+      //在循环里面找反例
+      Object.keys(rules).forEach(v => {
+        //只要有一个不成立即可停止
+        if(!valid) return
+
+        let item = rules[v];
+
+        if (!item.value) {
+          valid = false;
+          this.$alert(item.message, "提示", {
+            confirmButtonText: "确定",
+            type: "warning"
+          });
+        }
+      });
+
+      if(!valid) return
+
+      this.$axios({
+        url: "/posts",
+        method: "post",
+        headers: {
+          Authorization: `Bearer ${this.$store.state.user.userInfo.token}`
+        },
+        data: this.addPost
+      }).then(res => {
+        // console.log(res);
+        if (res.status === 200) {
+          this.$message.success(res.data.message);
+          //清空表单
+          this.$refs.vueEditor.editor.root.innerHTML = ""
+          for(let key in this.addPost) {
+            this.addPost[key] = ''
+          }
+        }
+      });
     }
   }
 };
