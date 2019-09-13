@@ -1,58 +1,65 @@
 <template>
-  <div class="container">
-    <div class="main">
-      <el-row type="flex" justify="space-between">
-        <div class="publish">
-          <h2 class="title">发表新攻略</h2>
-          <p class="share">分享你的个人游记，让更多人看到哦！</p>
-          <el-form ref="form" class="form">
-            <el-form-item class="input-title">
-              <el-input v-model="addPost.title" placeholder="请输入标题" v-myfocus></el-input>
-            </el-form-item>
-            <el-form-item class="textarea">
-              <div>
-                <VueEditor :config="config" ref="vueEditor" />
-              </div>
-            </el-form-item>
-            <el-form-item label="选择城市" class="city">
-              <i class="el-icon-location"></i>
-              <el-autocomplete
-                v-model="addPost.city"
-                :fetch-suggestions="querySearchCity"
-                :trigger-on-focus="false"
-                placeholder="请搜索游玩城市"
-                @select="handleSelect"
-                @blur="handleBlur"
-              ></el-autocomplete>
-            </el-form-item>
-          </el-form>
-          <div class="submit-btn">
-            <el-button type="primary" size="small" @click="handleAdd">发布</el-button>
-            <span class="submit-text">
-              或者
-              <a href="javascript:;" @click="handleSave">保存到草稿箱</a>
-            </span>
-          </div>
-        </div>
-        <div class="drafts-aside">
-          <h4>草稿箱 ( {{draftsTitle.length}} )</h4>
-          <div class="drafts-list">
-            <div
-              class="drafts-item"
-              v-for="(item,index) in draftsTitle"
-              :key="index"
-              @click="handleTitle(index)"
-            >
-              <div class="drafts-post-title">
-                {{item.title}}
-                <i class="el-icon-edit"></i>
-                <i class="el-icon-remove delete" @click="handleDelete(index)"></i>
-              </div>
-              <p class="time">{{new Date() | timeFormat}}</p>
+  <div class="create">
+    <div class="container">
+      <div class="main">
+        <el-row type="flex" justify="space-between">
+          <div class="publish">
+            <h2 class="title">发表新攻略</h2>
+            <p class="share">分享你的个人游记，让更多人看到哦！</p>
+            <el-form ref="form" class="form">
+              <el-form-item class="input-title">
+                <el-input v-model="addPost.title" placeholder="请输入标题" v-myfocus></el-input>
+              </el-form-item>
+              <el-form-item class="textarea">
+                <div>
+                  <VueEditor :config="config" ref="vueEditor"/>
+                </div>
+              </el-form-item>
+              <el-form-item label="选择城市" class="city">
+                <i class="el-icon-location"></i>
+                <el-autocomplete
+                  v-model="addPost.city"
+                  :fetch-suggestions="querySearchCity"
+                  :trigger-on-focus="false"
+                  placeholder="请搜索游玩城市"
+                  @select="handleSelect"
+                  @blur="handleBlur"
+                ></el-autocomplete>
+              </el-form-item>
+            </el-form>
+            <div class="submit-btn">
+              <el-button type="primary" size="small" @click="handleAdd">发布</el-button>
+              <span class="submit-text">
+                或者
+                <a href="javascript:;" @click="handleSave">保存到草稿箱</a>
+              </span>
             </div>
           </div>
-        </div>
-      </el-row>
+          <div class="drafts-aside">
+            <h4>
+              草稿箱 (
+              <span>{{$store.state.post.draftsTitle.length}}</span>)
+            </h4>
+            <div class="drafts-list">
+              <div
+                class="drafts-item"
+                v-for="(item,index) in $store.state.post.draftsTitle"
+                :key="index"
+                @click="handleTitle(index)"
+              >
+                <div class="drafts-post-title">
+                  {{item.title}}
+                  <i class="el-icon-edit"></i>
+                  <el-tooltip content="删除" placement="top" effect="light">
+                    <i class="el-icon-remove delete" @click="handleDelete(index)"></i>
+                  </el-tooltip>
+                </div>
+                <p class="time">{{new Date() | timeFormat}}</p>
+              </div>
+            </div>
+          </div>
+        </el-row>
+      </div>
     </div>
   </div>
 </template>
@@ -136,7 +143,7 @@ export default {
         city: "" //城市id/名称
       },
       //定义一个变量存储store的值
-      draftsTitle : []
+      // draftsTitle: []
     };
   },
   components: {
@@ -255,8 +262,8 @@ export default {
       //注意的是需要倒序插入
       //使用vuex管理数据
       this.addPost.content = this.$refs.vueEditor.editor.root.innerHTML;
-      this.draftsTitle.unshift(this.addPost)
-      this.$store.commit("post/setDraftsTitle", this.draftsTitle);
+      // this.draftsTitle.unshift(this.addPost);
+      this.$store.commit("post/setDraftsTitle", this.addPost);
       this.$message.success("已保存到草稿箱");
       //刷新当前页面
       location.reload();
@@ -264,9 +271,12 @@ export default {
 
     //点击草稿箱的标题显示默认数据
     handleTitle(index) {
-      this.addPost.title = this.draftsTitle[index].title;
-      this.$refs.vueEditor.editor.root.innerHTML = this.draftsTitle[index].content;
-      this.addPost.city = this.draftsTitle[index].city;
+      let info = this.$store.state.post.draftsTitle
+      this.addPost.title = info[index].title;
+      this.$refs.vueEditor.editor.root.innerHTML = info[
+        index
+      ].content;
+      this.addPost.city = info[index].city;
     },
 
     //删除草稿箱
@@ -276,105 +286,116 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      })
-        .then(() => {          
-          this.draftsTitle.splice(index,1)
-          this.$store.commit("post/setDraftsTitle", this.draftsTitle)
-          this.$message.success('删除成功')
-          location.reload()
-      })
+      }).then(() => {
+        this.$store.commit("post/deleteDraftsTitle", index);
+        this.$message.success("删除成功");
+        //让内容清空
+        for(var key in this.addPost) {
+          this.addPost[key] = ""
+        }       
+        this.$refs.vueEditor.editor.root.innerHTML = ""
+      });
     }
-  },
-  mounted() {
-    setTimeout(() => {
-    this.draftsTitle = [...this.$store.state.post.draftsTitle] 
-    // console.log(this.draftsTitle)
-    },200)
   }
+  // mounted() {
+  //   setTimeout(() => {
+  //     this.draftsTitle = [...this.$store.state.post.draftsTitle];
+  //     // console.log(this.draftsTitle)
+  //   }, 200);
+  // }
 };
 </script>
 <style lang="less" scoped>
-.container {
-  width: 1000px;
-  min-width: 1000px;
-  margin: 0 auto;
-  padding: 20px;
-  .main {
-    .publish {
-      width: 750px;
-      .title {
-        font-size: 22px;
-        font-weight: normal;
-        margin-bottom: 10px;
-      }
-      .share {
-        font-size: 12px;
-        color: #999;
-        margin-bottom: 10px;
-      }
-      .form {
-        .textarea {
-          /deep/.ql-editor {
-            height: 400px;
-          }
+.create {
+  background: url('https://timgsa.baidu.com/timg?image&quality=80&size=b10000_10000&sec=1568313381&di=533f8989ebb6c1a8997ca427186fae11&src=http://b-ssl.duitang.com/uploads/item/201701/20/20170120025740_Pjaek.thumb.700_0.jpeg') no-repeat;
+  background-size: contain;
+  // background-size: 30%;
+  .container {
+    width: 1000px;
+    min-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    .main {
+      .publish {
+        width: 750px;
+        .title {
+          font-size: 22px;
+          font-weight: normal;
+          margin-bottom: 10px;
         }
-        .city {
-          .el-icon-location {
-            font-size: 18px;
-            color: #00a0ff;
-          }
+        .share {
+          font-size: 12px;
+          color: #999;
+          margin-bottom: 10px;
         }
-      }
-      .submit-btn {
-        .submit-text {
-          font-size: 14px;
-          margin-left: 10px;
-          a {
-            color: #ffa500;
-            &:hover {
-              text-decoration: underline;
+        .form {
+          .textarea {
+            /deep/.ql-editor {
+              height: 400px;
+              // background-color: rgb(240, 236, 236);
+            }
+          }
+          .city {
+            .el-icon-location {
+              font-size: 18px;
+              color: #00a0ff;
             }
           }
         }
-      }
-    }
-    .drafts-aside {
-      width: 200px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ddd;
-      height: fit-content;
-      h4 {
-        font-weight: normal;
-        font-size: 16px;
-        color: #666;
-        margin-bottom: 10px;
-      }
-      .drafts-list {
-        .drafts-item {
-          &:hover {
-            cursor: pointer;
-            color: #ffa500;
-            .delete {
-              visibility: visible;
+        .submit-btn {
+          .submit-text {
+            font-size: 14px;
+            margin-left: 10px;
+            a {
+              color: #ffa500;
               &:hover {
-                color: rgb(236, 60, 60);
+                text-decoration: underline;
               }
             }
           }
+        }
+      }
+      .drafts-aside {
+        width: 200px;
+        padding: 10px;
+        box-sizing: border-box;
+        border: 1px solid #ddd;
+        height: fit-content;
+        h4 {
+          font-weight: normal;
+          font-size: 16px;
+          color: #666;
           margin-bottom: 10px;
-          .drafts-post-title {
-            font-size: 14px;
+          > span {
+            color: darkorange;
           }
-          .delete {
-            visibility: hidden;
-            margin-left: 40px;
-            font-size: 16px;
-            color: rgba(0, 0, 0, 0.4);
-          }
-          .time {
-            font-size: 14px;
-            color: #999;
+        }
+        .drafts-list {
+          .drafts-item {
+            &:hover {
+              cursor: pointer;
+              color: #ffa500;
+              .delete {
+                visibility: visible;
+                &:hover {
+                  color: rgb(236, 60, 60);
+                }
+              }
+            }
+            margin-bottom: 10px;
+            .drafts-post-title {
+              font-size: 14px;
+            }
+            .delete {
+              visibility: hidden;
+              margin-left: 40px;
+              font-size: 16px;
+              color: rgba(0, 0, 0, 0.4);
+            }
+            .time {
+              font-size: 14px;
+              color: #999;
+            }
           }
         }
       }
