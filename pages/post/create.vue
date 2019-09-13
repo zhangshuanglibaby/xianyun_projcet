@@ -5,14 +5,25 @@
         <el-row type="flex" justify="space-between">
           <div class="publish">
             <h2 class="title">发表新攻略</h2>
-            <p class="share">分享你的个人游记，让更多人看到哦！</p>
+            <p class="share">
+              分享你的个人游记，让更多人看到哦！
+              <el-button
+                type="primary"
+                class="addBtn"
+                plain
+                v-show="isShow"
+                icon="el-icon-plus"
+                size="mini"
+                @click="handleAddBtn"
+              >新增攻略</el-button>
+            </p>
             <el-form ref="form" class="form">
               <el-form-item class="input-title">
                 <el-input v-model="addPost.title" placeholder="请输入标题" v-myfocus></el-input>
               </el-form-item>
               <el-form-item class="textarea">
                 <div>
-                  <VueEditor :config="config" ref="vueEditor"/>
+                  <VueEditor :config="config" ref="vueEditor" />
                 </div>
               </el-form-item>
               <el-form-item label="选择城市" class="city">
@@ -142,8 +153,8 @@ export default {
         title: "", //文章标题
         city: "" //城市id/名称
       },
-      //定义一个变量存储store的值
-      // draftsTitle: []
+      //定义一个变量是否弹出新增攻略按钮
+      isShow : false
     };
   },
   components: {
@@ -262,7 +273,6 @@ export default {
       //注意的是需要倒序插入
       //使用vuex管理数据
       this.addPost.content = this.$refs.vueEditor.editor.root.innerHTML;
-      // this.draftsTitle.unshift(this.addPost);
       this.$store.commit("post/setDraftsTitle", this.addPost);
       this.$message.success("已保存到草稿箱");
       //刷新当前页面
@@ -271,11 +281,10 @@ export default {
 
     //点击草稿箱的标题显示默认数据
     handleTitle(index) {
-      let info = this.$store.state.post.draftsTitle
+      this.isShow = true
+      let info = this.$store.state.post.draftsTitle;
       this.addPost.title = info[index].title;
-      this.$refs.vueEditor.editor.root.innerHTML = info[
-        index
-      ].content;
+      this.$refs.vueEditor.editor.root.innerHTML = info[index].content;
       this.addPost.city = info[index].city;
     },
 
@@ -287,27 +296,33 @@ export default {
         cancelButtonText: "取消",
         type: "warning"
       }).then(() => {
+        this.isShow = false
         this.$store.commit("post/deleteDraftsTitle", index);
         this.$message.success("删除成功");
         //让内容清空
-        for(var key in this.addPost) {
-          this.addPost[key] = ""
-        }       
-        this.$refs.vueEditor.editor.root.innerHTML = ""
+        for (var key in this.addPost) {
+          this.addPost[key] = "";
+        }
+        this.$refs.vueEditor.editor.root.innerHTML = "";
       });
+    },
+
+    //点击新增攻略按钮触发
+    handleAddBtn() {
+      this.isShow = false
+      for (var key in this.addPost) {
+      this.addPost[key] = "";
+      }
+      this.$refs.vueEditor.editor.root.innerHTML = "";
     }
   }
-  // mounted() {
-  //   setTimeout(() => {
-  //     this.draftsTitle = [...this.$store.state.post.draftsTitle];
-  //     // console.log(this.draftsTitle)
-  //   }, 200);
-  // }
+
 };
 </script>
 <style lang="less" scoped>
 .create {
-  background: url('https://timgsa.baidu.com/timg?image&quality=80&size=b10000_10000&sec=1568313381&di=533f8989ebb6c1a8997ca427186fae11&src=http://b-ssl.duitang.com/uploads/item/201701/20/20170120025740_Pjaek.thumb.700_0.jpeg') no-repeat;
+  background: url("https://timgsa.baidu.com/timg?image&quality=80&size=b10000_10000&sec=1568313381&di=533f8989ebb6c1a8997ca427186fae11&src=http://b-ssl.duitang.com/uploads/item/201701/20/20170120025740_Pjaek.thumb.700_0.jpeg")
+    no-repeat;
   background-size: contain;
   // background-size: 30%;
   .container {
@@ -327,6 +342,9 @@ export default {
           font-size: 12px;
           color: #999;
           margin-bottom: 10px;
+          .addBtn {
+            margin-left: 15px;
+          }
         }
         .form {
           .textarea {
