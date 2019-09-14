@@ -4,25 +4,28 @@
       <!-- 面包屑导航 -->
       <div class="breadCrumb">
         <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item :to="{ path: '/' }">酒店</el-breadcrumb-item>
-          <el-breadcrumb-item>南京酒店</el-breadcrumb-item>
-          <el-breadcrumb-item>漫耕假日酒店(原全季酒店高淳店)</el-breadcrumb-item>
+          <el-breadcrumb-item 
+          :to="{ path: '/hotel' }"
+          v-for="(item,index) in breadNav"
+          :key="index">{{item}}</el-breadcrumb-item>
+          <!-- <el-breadcrumb-item>南京酒店</el-breadcrumb-item>
+          <el-breadcrumb-item>{{hotelData.name}}</el-breadcrumb-item> -->
         </el-breadcrumb>
       </div>
 
       <!-- 酒店名称 -->
       <div class="name-info">
         <div class="hotel-name">
-          漫耕假日酒店(原全季酒店高淳店)
+          {{hotelData.name}}
           <span>
             <i class="iconfont iconhuangguan"></i><i class="iconfont iconhuangguan"></i>
           </span>
         </div>
         <div class="hotel-spell">
-          man geng jia ri hotel (yuan quan ji jiu dian gao chun dian)
+          {{hotelData.alias}}
         </div>
         <div class="hotel-addres">
-          <i class="iconfont iconlocation"></i>宝塔路358号
+          <i class="iconfont iconlocation"></i>{{hotelData.address}}
         </div>
       </div>
 
@@ -58,6 +61,23 @@ export default {
     HotelAsset,
     HotelComment,
     HotelMap
+  },
+  data() {
+    return {
+      hotelData : {},  //获取大数据
+      breadNav : []  //存储面包屑数据
+    }
+  },
+  mounted() {
+    this.$axios({
+      url : 'http://157.122.54.189:9095/hotels?id=4'
+    }).then(res => {
+      // console.log(res)
+      this.hotelData = res.data.data[0]
+      this.breadNav = this.hotelData.breadcrumb.split('>')
+      // console.log(this.breadNav)
+      console.log(this.hotelData)
+    })
   }
 };
 </script>

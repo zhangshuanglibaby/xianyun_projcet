@@ -3,7 +3,7 @@
     <el-row type="flex" justify class="map-view">
       <div id="container"></div>
       <div class="view-list">
-        <el-tabs :tab-position="tabPosition" style="height: 200px;">
+        <el-tabs tab-position="top" style="height: 200px;">
           <el-tab-pane label="风景">
             <ol class="list">
               <li class="list-item">
