@@ -31,9 +31,9 @@
 
       <!-- 酒店图片 -->
       <HotelPic />
-
+.
       <!-- 酒店价格 -->
-      <HotelPrice />
+      <HotelPrice :data="hotelData.products"/>
 
       <!-- 酒店地图 -->
       <HotelMap />
@@ -64,7 +64,9 @@ export default {
   },
   data() {
     return {
-      hotelData : {},  //获取大数据
+      hotelData : {
+        products : []
+      },  //获取大数据
       breadNav : []  //存储面包屑数据
     }
   },
