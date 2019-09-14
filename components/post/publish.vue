@@ -24,7 +24,8 @@
             <VueEditor :config="config" ref="vueEditor" />
           </div>
         </el-form-item>
-        <el-form-item label="选择城市" class="city">
+        <el-form-item  class="city">
+          <span>选择城市</span>
           <i class="el-icon-location"></i>
           <el-autocomplete
             v-model="addPost.city"
@@ -97,14 +98,8 @@ export default {
           // 工具栏
           toolbar: [
             ["bold", "italic", "underline", "strike"], // toggled buttons
-            // ["blockquote", "code-block"],
             [{ header: 1 }, { header: 2 }], // custom button values
-
             ["image", "video"]
-            // [{ list: "ordered" }, { list: "bullet" }],
-            // [{ script: "sub" }, { script: "super" }], // superscript/subscript
-            // [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
-            // [{ direction: "rtl" }] // text direction
           ]
         },
         // 主题
@@ -214,7 +209,7 @@ export default {
         },
         city: {
           value: this.addPost.city,
-          message: "请选择城市"
+          message: "请输入城市"
         }
       };
 
@@ -333,6 +328,11 @@ export default {
     }
   }
   .form {
+    .el-form-item {
+      &:last-child {
+        text-align: right;
+      }
+    }
     .textarea {
       /deep/.ql-editor {
         height: 400px;
@@ -347,6 +347,7 @@ export default {
     }
   }
   .submit-btn {
+    text-align: right;
     .submit-text {
       font-size: 14px;
       margin-left: 10px;
